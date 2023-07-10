@@ -27,6 +27,15 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
 
+        h2 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
         label {
             display: block;
             margin-bottom: 10px;
@@ -102,12 +111,14 @@
     <h1>Game UI</h1>
 
     <form id="cheatLevelsTo81Form" action="/cheatLevelsTo81" method="post">
+        <h2>Cheat Levels to 81</h2>
         <label for="cheatLevelsTo81Username">Username:</label>
         <textarea id="cheatLevelsTo81Username" name="username" required></textarea>
         <button type="submit">Cheat Levels to 81</button>
     </form>
 
     <form id="addGemsForm" action="/addGems" method="post">
+        <h2>Add Gems</h2>
         <label for="addGemsUsername">Username:</label>
         <textarea id="addGemsUsername" name="username" required></textarea>
         <label for="addGemsAmount">Gems to add:</label>
@@ -116,6 +127,7 @@
     </form>
 
     <form id="removeGemsForm" action="/removeGems" method="post">
+        <h2>Remove Gems</h2>
         <label for="removeGemsUsername">Username:</label>
         <textarea id="removeGemsUsername" name="username" required></textarea>
         <label for="removeGemsAmount">Gems to remove:</label>
@@ -124,24 +136,28 @@
     </form>
 
     <form id="openLevelBatch1Form" action="/openLevelBatch1" method="post">
+        <h2>Open Level Batch 1</h2>
         <label for="openLevelBatch1Username">Username:</label>
         <textarea id="openLevelBatch1Username" name="username" required></textarea>
         <button type="submit">Open Level Batch 1</button>
     </form>
 
     <form id="openLevelBatch2Form" action="/openLevelBatch2" method="post">
+        <h2>Open Level Batch 2</h2>
         <label for="openLevelBatch2Username">Username:</label>
         <textarea id="openLevelBatch2Username" name="username" required></textarea>
         <button type="submit">Open Level Batch 2</button>
     </form>
 
     <form id="resetPlayerForm" action="/resetPlayer" method="post">
+        <h2>Reset Player</h2>
         <label for="resetPlayerUsername">Username:</label>
         <textarea id="resetPlayerUsername" name="username" required></textarea>
         <button type="submit">Reset Player</button>
     </form>
 
     <form id="clearLeaderboardForm" action="/clearLeaderboard" method="post">
+        <h2>Clear Leaderboard</h2>
         <label for="clearLeaderboardLevelName">Level Name:</label>
         <select id="clearLeaderboardLevelName" name="levelName" required>
             <option value="cavern-survival">Cavern Survival</option>
