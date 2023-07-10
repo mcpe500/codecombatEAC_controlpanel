@@ -156,6 +156,13 @@
         <button type="submit">Open Level Batch 3</button>
     </form>
 
+    <form id="openLevelBatch4Form" action="/openLevelBatch4" method="post">
+        <h2>Open Level Batch 4</h2>
+        <label for="openLevelBatch4Username">Username:</label>
+        <textarea id="openLevelBatch4Username" name="username" required></textarea>
+        <button type="submit">Open Level Batch 4</button>
+    </form>
+
     <form id="resetPlayerForm" action="/resetPlayer" method="post">
         <h2>Reset Player</h2>
         <label for="resetPlayerUsername">Username:</label>
@@ -172,6 +179,14 @@
             <option value="multiplayer-treasure-grove">Multiplayer Treasure Grove</option>
         </select>
         <button type="submit">Clear Leaderboard</button>
+    </form>
+
+
+    <form id="getAllPlayerForm" action="/getAllPlayer" method="get">
+        <h2>Get All Player</h2>
+        <label for="getAllPlayerUsername">Username:</label>
+        <textarea id="getAllPlayerUsername" name="username" required></textarea>
+        <button type="submit">Get All Player</button>
     </form>
 
 </body>

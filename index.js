@@ -1,10 +1,10 @@
-const { batch1, batch2, batch3 } = require("./batch.json");
+const { batch1, batch2, batch3, batch4 } = require("./batch.json");
 
 const express = require('express');
 const app = express();
 const { MongoClient, BSON } = require('mongodb');
 
-const {mongoURI,databaseName,collectionName} = require("./env.json")
+const { mongoURI, databaseName, collectionName } = require("./env.json")
 // const mongoURI = 'mongodb://54.164.88.26:27017';
 // const databaseName = 'coco';
 // const collectionName = 'users';
@@ -68,7 +68,6 @@ app.post('/openLevelBatch2', async (req, res) => {
     return res.send("Opened Level Batch 2 for the user.");
 });
 
-
 app.post('/openLevelBatch3', async (req, res) => {
     const { username } = req.body;
     // Call the openLevelBatch2 function with the provided username
@@ -77,6 +76,16 @@ app.post('/openLevelBatch3', async (req, res) => {
         await openLevelBatch3(usernames[i]);
     }
     return res.send("Opened Level Batch 3 for the user.");
+});
+
+app.post('/openLevelBatch4', async (req, res) => {
+    const { username } = req.body;
+    // Call the openLevelBatch2 function with the provided username
+    const usernames = username.split(" ");
+    for (let i = 0; i < usernames.length; i++) {
+        await openLevelBatch4(usernames[i]);
+    }
+    return res.send("Opened Level Batch 4 for the user.");
 });
 
 // app.post('/modifyPoint', async (req, res) => {
@@ -97,6 +106,17 @@ app.post('/resetPlayer', async (req, res) => {
         await resetPlayer(usernames[i]);
     }
     return res.send("Player reset successfully.");
+});
+
+app.get('/getAllPlayer', async (req, res) => {
+    const { username } = req.query;
+    // Call the resetPlayer function with the provided username
+    const usernames = username.split(" ");
+    let playerObj = [];
+    for (let i = 0; i < usernames.length; i++) {
+        playerObj = await getAllPlayers(usernames[i]);
+    }
+    return res.send(JSON.stringify(playerObj));
 });
 
 app.post('/clearLeaderboard', async (req, res) => {
@@ -324,6 +344,39 @@ async function openLevelBatch3(username) {
     }
 }
 
+async function openLevelBatch4(username) {
+    try {
+        const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+        await client.connect();
+        console.log('Connected to MongoDB');
+
+        const db = client.db(databaseName);
+        const collection = db.collection(collectionName);
+
+        const user = await collection.findOne({ name: { $regex: username } });
+        console.log('User:');
+        console.log(user);
+
+        if (user) {
+            // Modify the user object
+            user.earned.levels = batch4;
+
+            // Update the user object in the database
+            const updateResult = await collection.updateOne(
+                { _id: user._id },
+                { $set: user }
+            );
+            console.log('Update result:');
+            console.log(updateResult);
+        }
+
+        client.close();
+        console.log('Connection closed');
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error);
+    }
+}
+
 // const levels = {
 //     "level1": 0,
 //     "level2": 23,
@@ -331,7 +384,6 @@ async function openLevelBatch3(username) {
 // }
 
 async function modifyPoint(username, level) {
-
     try {
         const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
         await client.connect();
@@ -397,6 +449,54 @@ async function reserPlayer(username) {
         console.log('Connection closed');
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
+    }
+}
+async function deletePlayer(username) {
+    try {
+        const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+        await client.connect();
+        console.log('Connected to MongoDB');
+
+        const db = client.db(databaseName);
+        const collection = db.collection(collectionName);
+
+        const user = await collection.findOne({ name: { $regex: username } });
+        console.log('User:');
+        console.log(user);
+
+        if (user) {
+            // Delete the user object from the database
+            const deleteResult = await collection.deleteOne({ _id: user._id });
+            console.log('Delete result:');
+            console.log(deleteResult);
+        }
+
+        client.close();
+        console.log('Connection closed');
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error);
+    }
+}
+async function getAllPlayers(contained) {
+    try {
+        const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+        await client.connect();
+        console.log('Connected to MongoDB');
+
+        const db = client.db(databaseName);
+        const collection = db.collection(collectionName);
+
+        const query = { name: { $regex: contained } };
+        const players = await collection.find(query).toArray();
+        console.log('Players:');
+        console.log(players);
+
+        client.close();
+        console.log('Connection closed');
+        return players;
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error);
+        return [];
     }
 }
 
