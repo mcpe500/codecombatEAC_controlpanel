@@ -158,24 +158,26 @@ async function addGems(username, tambahGems) {
         const collection = db.collection(collectionName);
 
         const user = await collection.findOne({ name: { $regex: username } });
-        console.log('User:');
-        console.log(user);
-
+        // console.log('User:');
+        // console.log(user);
+        let resultgems = 0;
         if (user) {
             // Modify the user object
             // user.earned.gems = new BSON.Int32(100000000);
             let earnedGems = user.earned.gems;
-            earnedGems = earnedGems + tambahGems;
+            earnedGems = earnedGems + parseInt(tambahGems);
             user.earned.gems = new BSON.Int32(earnedGems);
+            resultgems = earnedGems;
 
             // Update the user object in the database
             const updateResult = await collection.updateOne(
                 { _id: user._id },
                 { $set: user }
             );
-            console.log('Update result:');
-            console.log(updateResult);
+            // console.log('Update result:');
+            // console.log(updateResult);
         }
+        console.log("result gems ", resultgems)
 
         client.close();
         console.log('Connection closed');
@@ -200,7 +202,7 @@ async function removeGems(username, kurangGems) {
         if (user) {
             // Modify the user object
             let earnedGems = user.earned.gems;
-            earnedGems = earnedGems - kurangGems;
+            earnedGems = earnedGems - parseInt(kurangGems);
             user.earned.gems = new BSON.Int32(earnedGems);
 
             // Update the user object in the database
