@@ -17,7 +17,7 @@ Aplikasi ini memiliki beberapa fitur yang dapat digunakan:
 
 Berikut adalah langkah-langkah untuk menjalankan aplikasi ini di lingkungan lokal Anda:
 
-1. Pertama, masuk ke direktori `index.js`.
+1. Pertama, masuk ke direktori `index.js` dan cari `env.json`.
 2. Rubah bagian `mongoURI` pada file tersebut dengan URL MongoDB yang Anda miliki.
 3. Jalankan perintah `npm run nodemon` di terminal.
 4. Buka aplikasi di browser dengan URL yang ditetapkan, misalnya http://localhost:3000.

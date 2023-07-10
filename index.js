@@ -4,9 +4,10 @@ const express = require('express');
 const app = express();
 const { MongoClient, BSON } = require('mongodb');
 
-const mongoURI = 'mongodb://54.164.88.26:27017';
-const databaseName = 'coco';
-const collectionName = 'users';
+const {mongoURI,databaseName,collectionName} = require("./env.json")
+// const mongoURI = 'mongodb://54.164.88.26:27017';
+// const databaseName = 'coco';
+// const collectionName = 'users';
 
 console.log('Program start');
 
