@@ -185,9 +185,19 @@ async function addGems(username, tambahGems) {
         if (user) {
             // Modify the user object
             // user.earned.gems = new BSON.Int32(100000000);
-            let earnedGems = user.earned.gems;
+            let earnedGems = 0;
+            if (user.earned) {
+                if (user.earned.gems) {
+                    earnedGems = user.earned.gems;
+                }
+            }
             earnedGems = earnedGems + parseInt(tambahGems);
-            user.earned.gems = new BSON.Int32(earnedGems);
+            if (!user.earned) {
+                user.earned = { gems: new BSON.Int32(earnedGems) };
+
+            } else {
+                user.earned.gems = new BSON.Int32(earnedGems);
+            }
             resultgems = earnedGems;
 
             // Update the user object in the database
@@ -222,9 +232,20 @@ async function removeGems(username, kurangGems) {
 
         if (user) {
             // Modify the user object
-            let earnedGems = user.earned.gems;
+            let earnedGems = 0;
+            if (user.earned) {
+                if (user.earned.gems) {
+                    earnedGems = user.earned.gems;
+                }
+            }
             earnedGems = earnedGems - parseInt(kurangGems);
-            user.earned.gems = new BSON.Int32(earnedGems);
+
+            if (!user.earned) {
+                user.earned = { gems: new BSON.Int32(earnedGems) };
+
+            } else {
+                user.earned.gems = new BSON.Int32(earnedGems);
+            }
 
             // Update the user object in the database
             const updateResult = await collection.updateOne(
@@ -416,7 +437,7 @@ async function modifyPoint(username, level) {
     }
 }
 
-async function reserPlayer(username) {
+async function resetPlayer(username) {
     try {
         const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
         await client.connect();
@@ -432,10 +453,35 @@ async function reserPlayer(username) {
         if (user) {
             // Modify the user object
             user.spent = 0;
-            user.purchased.items = [];
-            user.earned.items = [];
-            user.earned.heroes = [];
-            user.heroConfig.inventory = {};
+
+            if (!user.purchased) {
+                user.purchased = {};
+            }
+
+            if (!user.purchased.items) {
+                user.purchased.items = [];
+            }
+
+            if (!user.earned) {
+                user.earned = {};
+            }
+
+            if (!user.earned.items) {
+                user.earned.items = [];
+            }
+
+            if (!user.earned.heroes) {
+                user.earned.heroes = [];
+            }
+
+            if (!user.heroConfig) {
+                user.heroConfig = {};
+            }
+
+            if (!user.heroConfig.inventory) {
+                user.heroConfig.inventory = {};
+            }
+
             // Update the user object in the database
             const updateResult = await collection.updateOne(
                 { _id: user._id },
@@ -444,6 +490,7 @@ async function reserPlayer(username) {
             console.log('Update result:');
             console.log(updateResult);
         }
+
 
         client.close();
         console.log('Connection closed');
