@@ -185,12 +185,21 @@ async function addGems(username, tambahGems) {
             if (user) {
                 // Modify the user object
                 // user.earned.gems = new BSON.Int32(100000000);
-                let earnedGems = user.earned.gems;
+                let earnedGems = 0;
+                if (user.earned) {
+                    if (user.earned.gems) {
+                        earnedGems = user.earned.gems;
+                    }
+                }
                 earnedGems = earnedGems + parseInt(tambahGems);
-                user.earned.gems = new BSON.Int32(earnedGems);
+                if (!user.earned) {
+                    user.earned = { gems: new BSON.Int32(earnedGems) };
+
+                } else {
+                    user.earned.gems = new BSON.Int32(earnedGems);
+                }
                 resultgems = earnedGems;
 
-<<<<<<< HEAD
                 // Update the user object in the database
                 const updateResult = await collection.updateOne(
                     { _id: user._id },
@@ -199,41 +208,9 @@ async function addGems(username, tambahGems) {
                 // console.log('Update result:');
                 // console.log(updateResult);
             }
-            console.log("result gems ", resultgems)
-=======
-        const user = await collection.findOne({ name: { $regex: username } });
-        // console.log('User:');
-        // console.log(user);
-        let resultgems = 0;
-        if (user) {
-            // Modify the user object
-            // user.earned.gems = new BSON.Int32(100000000);
-            let earnedGems = 0;
-            if (user.earned) {
-                if (user.earned.gems) {
-                    earnedGems = user.earned.gems;
-                }
-            }
-            earnedGems = earnedGems + parseInt(tambahGems);
-            if (!user.earned) {
-                user.earned = { gems: new BSON.Int32(earnedGems) };
-
-            } else {
-                user.earned.gems = new BSON.Int32(earnedGems);
-            }
-            resultgems = earnedGems;
-
-            // Update the user object in the database
-            const updateResult = await collection.updateOne(
-                { _id: user._id },
-                { $set: user }
-            );
-            // console.log('Update result:');
-            // console.log(updateResult);
->>>>>>> 442806ac95f7ec46793d41bd8949755357fb1bd1
+            client.close();
+            console.log('Connection closed');
         }
-        client.close();
-        console.log('Connection closed');
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
     }
@@ -254,11 +231,21 @@ async function removeGems(username, kurangGems) {
 
             if (user) {
                 // Modify the user object
-                let earnedGems = user.earned.gems;
+                let earnedGems = 0;
+                if (user.earned) {
+                    if (user.earned.gems) {
+                        earnedGems = user.earned.gems;
+                    }
+                }
                 earnedGems = earnedGems - parseInt(kurangGems);
-                user.earned.gems = new BSON.Int32(earnedGems);
 
-<<<<<<< HEAD
+                if (!user.earned) {
+                    user.earned = { gems: new BSON.Int32(earnedGems) };
+
+                } else {
+                    user.earned.gems = new BSON.Int32(earnedGems);
+                }
+
                 // Update the user object in the database
                 const updateResult = await collection.updateOne(
                     { _id: user._id },
@@ -267,35 +254,9 @@ async function removeGems(username, kurangGems) {
                 console.log('Update result:');
                 console.log(updateResult);
             }
-=======
-        if (user) {
-            // Modify the user object
-            let earnedGems = 0;
-            if (user.earned) {
-                if (user.earned.gems) {
-                    earnedGems = user.earned.gems;
-                }
-            }
-            earnedGems = earnedGems - parseInt(kurangGems);
-
-            if (!user.earned) {
-                user.earned = { gems: new BSON.Int32(earnedGems) };
-
-            } else {
-                user.earned.gems = new BSON.Int32(earnedGems);
-            }
-
-            // Update the user object in the database
-            const updateResult = await collection.updateOne(
-                { _id: user._id },
-                { $set: user }
-            );
-            console.log('Update result:');
-            console.log(updateResult);
->>>>>>> 442806ac95f7ec46793d41bd8949755357fb1bd1
+            client.close();
+            console.log('Connection closed');
         }
-        client.close();
-        console.log('Connection closed');
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
     }
