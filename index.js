@@ -20,20 +20,22 @@ app.get('/', (req, res) => {
 
 app.post('/cheatLevelsTo81', async (req, res) => {
     const { username } = req.body;
-    const usernames = username.split(" ");
-    for (let i = 0; i < usernames.length; i++) {
-        await cheatLevelsTo81(usernames[i]);
-    }
+    await cheatLevelsTo81(username.split(" "));
+    // const usernames = username.split(" ");
+    // for (let i = 0; i < usernames.length; i++) {
+    //     await cheatLevelsTo81(usernames[i]);
+    // }
     return res.send("Cheat levels to 81 completed.");
 });
 
 app.post('/addGems', async (req, res) => {
     const { username, tambahGems } = req.body;
     const usernames = username.split(" ");
+    await addGems(usernames, tambahGems);
     // Call the addGems function with the provided username and gem amount
-    for (let i = 0; i < usernames.length; i++) {
-        await addGems(usernames[i], tambahGems);
-    }
+    // for (let i = 0; i < usernames.length; i++) {
+    //     await addGems(usernames[i], tambahGems);
+    // }
     return res.send("Gems added successfully.");
 });
 
@@ -41,9 +43,10 @@ app.post('/removeGems', async (req, res) => {
     const { username, kurangGems } = req.body;
     // Call the removeGems function with the provided username and gem amount to remove
     const usernames = username.split(" ");
-    for (let i = 0; i < usernames.length; i++) {
-        await removeGems(usernames[i], kurangGems);
-    }
+    await removeGems(usernames, kurangGems);
+    // for (let i = 0; i < usernames.length; i++) {
+    //     await removeGems(usernames[i], kurangGems);
+    // }
 
     return res.send("Gems removed successfully.");
 });
@@ -52,9 +55,10 @@ app.post('/openLevelBatch1', async (req, res) => {
     const { username } = req.body;
     // Call the openLevelBatch1 function with the provided username
     const usernames = username.split(" ");
-    for (let i = 0; i < usernames.length; i++) {
-        await openLevelBatch1(usernames[i]);
-    }
+    await openLevelBatch1(usernames);
+    // for (let i = 0; i < usernames.length; i++) {
+    //     await openLevelBatch1(usernames[i]);
+    // }
     return res.send("Opened Level Batch 1 for the user.");
 });
 
@@ -62,9 +66,10 @@ app.post('/openLevelBatch2', async (req, res) => {
     const { username } = req.body;
     // Call the openLevelBatch2 function with the provided username
     const usernames = username.split(" ");
-    for (let i = 0; i < usernames.length; i++) {
-        await openLevelBatch2(usernames[i]);
-    }
+    await openLevelBatch2(usernames);
+    // for (let i = 0; i < usernames.length; i++) {
+    //     await openLevelBatch2(usernames[i]);
+    // }
     return res.send("Opened Level Batch 2 for the user.");
 });
 
@@ -72,9 +77,10 @@ app.post('/openLevelBatch3', async (req, res) => {
     const { username } = req.body;
     // Call the openLevelBatch2 function with the provided username
     const usernames = username.split(" ");
-    for (let i = 0; i < usernames.length; i++) {
-        await openLevelBatch3(usernames[i]);
-    }
+    await openLevelBatch3(usernames);
+    // for (let i = 0; i < usernames.length; i++) {
+    //     await openLevelBatch3(usernames[i]);
+    // }
     return res.send("Opened Level Batch 3 for the user.");
 });
 
@@ -82,29 +88,21 @@ app.post('/openLevelBatch4', async (req, res) => {
     const { username } = req.body;
     // Call the openLevelBatch2 function with the provided username
     const usernames = username.split(" ");
-    for (let i = 0; i < usernames.length; i++) {
-        await openLevelBatch4(usernames[i]);
-    }
+    await openLevelBatch4(usernames);
+    // for (let i = 0; i < usernames.length; i++) {
+    //     await openLevelBatch4(usernames[i]);
+    // }
     return res.send("Opened Level Batch 4 for the user.");
 });
-
-// app.post('/modifyPoint', async (req, res) => {
-//     const { username, level } = req.body;
-//     // Call the modifyPoint function with the provided username and new level
-//     const usernames = username.split(" ");
-//     for (let i = 0; i < usernames.length; i++) {
-//         await modifyPoint(usernames[i], level);
-//     }
-//     return res.send("Point modified successfully.");
-// });
 
 app.post('/resetPlayer', async (req, res) => {
     const { username } = req.body;
     // Call the resetPlayer function with the provided username
     const usernames = username.split(" ");
-    for (let i = 0; i < usernames.length; i++) {
-        await resetPlayer(usernames[i]);
-    }
+    await reserPlayer(usernames);
+    // for (let i = 0; i < usernames.length; i++) {
+    //     await resetPlayer(usernames[i]);
+    // }
     return res.send("Player reset successfully.");
 });
 
@@ -145,21 +143,23 @@ async function cheatLevelsTo81(username) {
         const db = client.db(databaseName);
         const collection = db.collection(collectionName);
 
-        const user = await collection.findOne({ name: { $regex: username } });
-        console.log('User:');
-        console.log(user);
+        for (let i = 0; i < username.length; i++) {
+            const user = await collection.findOne({ name: { $regex: username[i] } });
+            console.log('User:');
+            console.log(user);
 
-        if (user) {
-            // Modify the user object
-            user.points = new BSON.Int32(1000000000);
+            if (user) {
+                // Modify the user object
+                user.points = new BSON.Int32(1000000000);
 
-            // Update the user object in the database
-            const updateResult = await collection.updateOne(
-                { _id: user._id },
-                { $set: user }
-            );
-            console.log('Update result:');
-            console.log(updateResult);
+                // Update the user object in the database
+                const updateResult = await collection.updateOne(
+                    { _id: user._id },
+                    { $set: user }
+                );
+                console.log('Update result:');
+                console.log(updateResult);
+            }
         }
 
         client.close();
@@ -177,29 +177,29 @@ async function addGems(username, tambahGems) {
 
         const db = client.db(databaseName);
         const collection = db.collection(collectionName);
+        for (let i = 0; i < username.length; i++) {
+            const user = await collection.findOne({ name: { $regex: username[i] } });
+            // console.log('User:');
+            // console.log(user);
+            let resultgems = 0;
+            if (user) {
+                // Modify the user object
+                // user.earned.gems = new BSON.Int32(100000000);
+                let earnedGems = user.earned.gems;
+                earnedGems = earnedGems + parseInt(tambahGems);
+                user.earned.gems = new BSON.Int32(earnedGems);
+                resultgems = earnedGems;
 
-        const user = await collection.findOne({ name: { $regex: username } });
-        // console.log('User:');
-        // console.log(user);
-        let resultgems = 0;
-        if (user) {
-            // Modify the user object
-            // user.earned.gems = new BSON.Int32(100000000);
-            let earnedGems = user.earned.gems;
-            earnedGems = earnedGems + parseInt(tambahGems);
-            user.earned.gems = new BSON.Int32(earnedGems);
-            resultgems = earnedGems;
-
-            // Update the user object in the database
-            const updateResult = await collection.updateOne(
-                { _id: user._id },
-                { $set: user }
-            );
-            // console.log('Update result:');
-            // console.log(updateResult);
+                // Update the user object in the database
+                const updateResult = await collection.updateOne(
+                    { _id: user._id },
+                    { $set: user }
+                );
+                // console.log('Update result:');
+                // console.log(updateResult);
+            }
+            console.log("result gems ", resultgems)
         }
-        console.log("result gems ", resultgems)
-
         client.close();
         console.log('Connection closed');
     } catch (error) {
@@ -215,26 +215,26 @@ async function removeGems(username, kurangGems) {
 
         const db = client.db(databaseName);
         const collection = db.collection(collectionName);
+        for (let i = 0; i < username.length; i++) {
+            const user = await collection.findOne({ name: { $regex: username[i] } });
+            console.log('User:');
+            console.log(user);
 
-        const user = await collection.findOne({ name: { $regex: username } });
-        console.log('User:');
-        console.log(user);
+            if (user) {
+                // Modify the user object
+                let earnedGems = user.earned.gems;
+                earnedGems = earnedGems - parseInt(kurangGems);
+                user.earned.gems = new BSON.Int32(earnedGems);
 
-        if (user) {
-            // Modify the user object
-            let earnedGems = user.earned.gems;
-            earnedGems = earnedGems - parseInt(kurangGems);
-            user.earned.gems = new BSON.Int32(earnedGems);
-
-            // Update the user object in the database
-            const updateResult = await collection.updateOne(
-                { _id: user._id },
-                { $set: user }
-            );
-            console.log('Update result:');
-            console.log(updateResult);
+                // Update the user object in the database
+                const updateResult = await collection.updateOne(
+                    { _id: user._id },
+                    { $set: user }
+                );
+                console.log('Update result:');
+                console.log(updateResult);
+            }
         }
-
         client.close();
         console.log('Connection closed');
     } catch (error) {
@@ -251,25 +251,25 @@ async function openLevelBatch1(username) {
 
         const db = client.db(databaseName);
         const collection = db.collection(collectionName);
+        for (let i = 0; i < username.length; i++) {
+            const user = await collection.findOne({ name: { $regex: [i] } });
+            console.log('User:');
+            console.log(user);
 
-        const user = await collection.findOne({ name: { $regex: username } });
-        console.log('User:');
-        console.log(user);
+            if (user) {
+                // Modify the user object
+                // user.points = new BSON.Int32(100000000);
+                user.earned.levels = batch1;
 
-        if (user) {
-            // Modify the user object
-            // user.points = new BSON.Int32(100000000);
-            user.earned.levels = batch1;
-
-            // Update the user object in the database
-            const updateResult = await collection.updateOne(
-                { _id: user._id },
-                { $set: user }
-            );
-            console.log('Update result:');
-            console.log(updateResult);
+                // Update the user object in the database
+                const updateResult = await collection.updateOne(
+                    { _id: user._id },
+                    { $set: user }
+                );
+                console.log('Update result:');
+                console.log(updateResult);
+            }
         }
-
         client.close();
         console.log('Connection closed');
     } catch (error) {
@@ -285,24 +285,24 @@ async function openLevelBatch2(username) {
 
         const db = client.db(databaseName);
         const collection = db.collection(collectionName);
+        for (let i = 0; i < username.length; i++) {
+            const user = await collection.findOne({ name: { $regex: username[i] } });
+            console.log('User:');
+            console.log(user);
 
-        const user = await collection.findOne({ name: { $regex: username } });
-        console.log('User:');
-        console.log(user);
+            if (user) {
+                // Modify the user object
+                user.earned.levels = batch2;
 
-        if (user) {
-            // Modify the user object
-            user.earned.levels = batch2;
-
-            // Update the user object in the database
-            const updateResult = await collection.updateOne(
-                { _id: user._id },
-                { $set: user }
-            );
-            console.log('Update result:');
-            console.log(updateResult);
+                // Update the user object in the database
+                const updateResult = await collection.updateOne(
+                    { _id: user._id },
+                    { $set: user }
+                );
+                console.log('Update result:');
+                console.log(updateResult);
+            }
         }
-
         client.close();
         console.log('Connection closed');
     } catch (error) {
@@ -319,24 +319,24 @@ async function openLevelBatch3(username) {
 
         const db = client.db(databaseName);
         const collection = db.collection(collectionName);
+        for (let i = 0; i < username.length; i++) {
+            const user = await collection.findOne({ name: { $regex: username[i] } });
+            console.log('User:');
+            console.log(user);
 
-        const user = await collection.findOne({ name: { $regex: username } });
-        console.log('User:');
-        console.log(user);
+            if (user) {
+                // Modify the user object
+                user.earned.levels = batch3;
 
-        if (user) {
-            // Modify the user object
-            user.earned.levels = batch3;
-
-            // Update the user object in the database
-            const updateResult = await collection.updateOne(
-                { _id: user._id },
-                { $set: user }
-            );
-            console.log('Update result:');
-            console.log(updateResult);
+                // Update the user object in the database
+                const updateResult = await collection.updateOne(
+                    { _id: user._id },
+                    { $set: user }
+                );
+                console.log('Update result:');
+                console.log(updateResult);
+            }
         }
-
         client.close();
         console.log('Connection closed');
     } catch (error) {
@@ -352,24 +352,24 @@ async function openLevelBatch4(username) {
 
         const db = client.db(databaseName);
         const collection = db.collection(collectionName);
+        for (let i = 0; i < username.length; i++) {
+            const user = await collection.findOne({ name: { $regex: username[i] } });
+            console.log('User:');
+            console.log(user);
 
-        const user = await collection.findOne({ name: { $regex: username } });
-        console.log('User:');
-        console.log(user);
+            if (user) {
+                // Modify the user object
+                user.earned.levels = batch4;
 
-        if (user) {
-            // Modify the user object
-            user.earned.levels = batch4;
-
-            // Update the user object in the database
-            const updateResult = await collection.updateOne(
-                { _id: user._id },
-                { $set: user }
-            );
-            console.log('Update result:');
-            console.log(updateResult);
+                // Update the user object in the database
+                const updateResult = await collection.updateOne(
+                    { _id: user._id },
+                    { $set: user }
+                );
+                console.log('Update result:');
+                console.log(updateResult);
+            }
         }
-
         client.close();
         console.log('Connection closed');
     } catch (error) {
@@ -383,38 +383,38 @@ async function openLevelBatch4(username) {
 //     "level3": 50
 // }
 
-async function modifyPoint(username, level) {
-    try {
-        const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
-        await client.connect();
-        console.log('Connected to MongoDB');
+// async function modifyPoint(username, level) {
+//     try {
+//         const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+//         await client.connect();
+//         console.log('Connected to MongoDB');
 
-        const db = client.db(databaseName);
-        const collection = db.collection(collectionName);
+//         const db = client.db(databaseName);
+//         const collection = db.collection(collectionName);
 
-        const user = await collection.findOne({ name: { $regex: username } });
-        console.log('User:');
-        console.log(user);
+//         const user = await collection.findOne({ name: { $regex: username } });
+//         console.log('User:');
+//         console.log(user);
 
-        if (user) {
-            // Modify the user object
-            user.points = new BSON.Int32(level);
+//         if (user) {
+//             // Modify the user object
+//             user.points = new BSON.Int32(level);
 
-            // Update the user object in the database
-            const updateResult = await collection.updateOne(
-                { _id: user._id },
-                { $set: user }
-            );
-            console.log('Update result:');
-            console.log(updateResult);
-        }
+//             // Update the user object in the database
+//             const updateResult = await collection.updateOne(
+//                 { _id: user._id },
+//                 { $set: user }
+//             );
+//             console.log('Update result:');
+//             console.log(updateResult);
+//         }
 
-        client.close();
-        console.log('Connection closed');
-    } catch (error) {
-        console.error('Error connecting to MongoDB:', error);
-    }
-}
+//         client.close();
+//         console.log('Connection closed');
+//     } catch (error) {
+//         console.error('Error connecting to MongoDB:', error);
+//     }
+// }
 
 async function reserPlayer(username) {
     try {
@@ -424,27 +424,27 @@ async function reserPlayer(username) {
 
         const db = client.db(databaseName);
         const collection = db.collection(collectionName);
+        for (let i = 0; i < username.length; i++) {
+            const user = await collection.findOne({ name: { $regex: username[i] } });
+            console.log('User:');
+            console.log(user);
 
-        const user = await collection.findOne({ name: { $regex: username } });
-        console.log('User:');
-        console.log(user);
-
-        if (user) {
-            // Modify the user object
-            user.spent = 0;
-            user.purchased.items = [];
-            user.earned.items = [];
-            user.earned.heroes = [];
-            user.heroConfig.inventory = {};
-            // Update the user object in the database
-            const updateResult = await collection.updateOne(
-                { _id: user._id },
-                { $set: user }
-            );
-            console.log('Update result:');
-            console.log(updateResult);
+            if (user) {
+                // Modify the user object
+                user.spent = 0;
+                user.purchased.items = [];
+                user.earned.items = [];
+                user.earned.heroes = [];
+                user.heroConfig.inventory = {};
+                // Update the user object in the database
+                const updateResult = await collection.updateOne(
+                    { _id: user._id },
+                    { $set: user }
+                );
+                console.log('Update result:');
+                console.log(updateResult);
+            }
         }
-
         client.close();
         console.log('Connection closed');
     } catch (error) {
