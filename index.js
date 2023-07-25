@@ -99,7 +99,7 @@ app.post('/resetPlayer', async (req, res) => {
     const { username } = req.body;
     // Call the resetPlayer function with the provided username
     const usernames = username.split(" ");
-    await reserPlayer(usernames);
+    await resetPlayer(usernames);
     // for (let i = 0; i < usernames.length; i++) {
     //     await resetPlayer(usernames[i]);
     // }
