@@ -89,9 +89,6 @@ app.post('/openLevelBatch4', async (req, res) => {
     // Call the openLevelBatch2 function with the provided username
     const usernames = username.split(" ");
     await openLevelBatch4(usernames);
-    // for (let i = 0; i < usernames.length; i++) {
-    //     await openLevelBatch4(usernames[i]);
-    // }
     return res.send("Opened Level Batch 4 for the user.");
 });
 
@@ -100,10 +97,15 @@ app.post('/resetPlayer', async (req, res) => {
     // Call the resetPlayer function with the provided username
     const usernames = username.split(" ");
     await resetPlayer(usernames);
-    // for (let i = 0; i < usernames.length; i++) {
-    //     await resetPlayer(usernames[i]);
-    // }
     return res.send("Player reset successfully.");
+});
+
+app.post('/moveToFinal', async (req, res) => {
+    const { username } = req.body;
+    // Call the resetPlayer function with the provided username
+    const usernames = username.split(" ");
+    await moveToFinal(usernames);
+    return res.send("Moved To Comp.");
 });
 
 app.get('/getAllPlayer', async (req, res) => {
@@ -272,7 +274,7 @@ async function openLevelBatch1(username) {
         const db = client.db(databaseName);
         const collection = db.collection(collectionName);
         for (let i = 0; i < username.length; i++) {
-            const user = await collection.findOne({ name: { $regex: [i] } });
+            const user = await collection.findOne({ name: { $regex: username[i] } });
             console.log('User:');
             console.log(user);
 
@@ -397,45 +399,6 @@ async function openLevelBatch4(username) {
     }
 }
 
-// const levels = {
-//     "level1": 0,
-//     "level2": 23,
-//     "level3": 50
-// }
-
-// async function modifyPoint(username, level) {
-//     try {
-//         const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
-//         await client.connect();
-//         console.log('Connected to MongoDB');
-
-//         const db = client.db(databaseName);
-//         const collection = db.collection(collectionName);
-
-//         const user = await collection.findOne({ name: { $regex: username } });
-//         console.log('User:');
-//         console.log(user);
-
-//         if (user) {
-//             // Modify the user object
-//             user.points = new BSON.Int32(level);
-
-//             // Update the user object in the database
-//             const updateResult = await collection.updateOne(
-//                 { _id: user._id },
-//                 { $set: user }
-//             );
-//             console.log('Update result:');
-//             console.log(updateResult);
-//         }
-
-//         client.close();
-//         console.log('Connection closed');
-//     } catch (error) {
-//         console.error('Error connecting to MongoDB:', error);
-//     }
-// }
-
 async function resetPlayer(username) {
     try {
         const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -480,6 +443,15 @@ async function resetPlayer(username) {
                 if (!user.heroConfig.inventory) {
                     user.heroConfig.inventory = {};
                 }
+                user.purchased.items = [];
+                user.purchased.heroes = [];
+                user.earned.levels = [];
+                user.heroConfig = {};
+                if (!user.heroConfig) {
+                    user.heroConfig = {};
+                } else {
+                    user.heroConfig.inventory = {};
+                }
 
                 // Update the user object in the database
                 const updateResult = await collection.updateOne(
@@ -496,6 +468,48 @@ async function resetPlayer(username) {
         console.error('Error connecting to MongoDB:', error);
     }
 }
+
+async function moveToFinal(usernames) {
+    try {
+        const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+        await client.connect();
+        console.log('Connected to MongoDB');
+
+        const db = client.db(databaseName);
+        const collection = db.collection(collectionName);
+
+        for (const username of usernames) {
+            const sesiUsername = `sesi_${username}`;
+            const compUsername = `comp_${username}`;
+            const sesiUser = await collection.findOne({ name: { $regex: sesiUsername } });
+            const compUser = await collection.findOne({ name: { $regex: compUsername } });
+
+            console.log('sesiuser:');
+            console.log(sesiUser);
+            console.log('compuser:');
+            console.log(compUser);
+
+            if (sesiUser && compUser) {
+                if (sesiUser.earned && sesiUser.earned.gems) {
+                    compUser.earned = { gems: new BSON.Int32(sesiUser.earned.gems) };
+                }
+
+                // Update the user object in the database
+                await collection.updateOne(
+                    { _id: compUser._id },
+                    { $set: compUser }
+                );
+            }
+        }
+
+        client.close();
+        console.log('Connection closed');
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error);
+    }
+}
+
+
 async function deletePlayer(username) {
     try {
         const client = new MongoClient(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });

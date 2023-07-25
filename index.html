@@ -163,6 +163,13 @@
         <button type="submit">Open Level Batch 4</button>
     </form>
 
+    <form id="moveToFinalForm" action="/moveToFinal" method="post">
+        <h2>Move To Final</h2>
+        <label for="moveToFinalUsername">Username:</label>
+        <textarea id="moveToFinalUsername" name="username" required></textarea>
+        <button type="submit">Move Gems To Final</button>
+    </form>
+
     <form id="resetPlayerForm" action="/resetPlayer" method="post">
         <h2>Reset Player</h2>
         <label for="resetPlayerUsername">Username:</label>
@@ -180,7 +187,6 @@
         </select>
         <button type="submit">Clear Leaderboard</button>
     </form>
-
 
     <form id="getAllPlayerForm" action="/getAllPlayer" method="get">
         <h2>Get All Player</h2>
