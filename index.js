@@ -54,7 +54,9 @@ app.post('/removeGems', async (req, res) => {
 app.post('/openLevelBatch1', async (req, res) => {
     const { username } = req.body;
     // Call the openLevelBatch1 function with the provided username
-    const usernames = username.split(" ");
+    let username2 = username.replaceAll("\r", "")
+    let usernames = username2.split("\n");
+    console.log(usernames)
     await openLevelBatch1(usernames);
     // for (let i = 0; i < usernames.length; i++) {
     //     await openLevelBatch1(usernames[i]);
@@ -65,7 +67,8 @@ app.post('/openLevelBatch1', async (req, res) => {
 app.post('/openLevelBatch2', async (req, res) => {
     const { username } = req.body;
     // Call the openLevelBatch2 function with the provided username
-    const usernames = username.split(" ");
+    let username2 = username.replaceAll("\r", "")
+    let usernames = username2.split("\n");
     await openLevelBatch2(usernames);
     // for (let i = 0; i < usernames.length; i++) {
     //     await openLevelBatch2(usernames[i]);
@@ -103,7 +106,8 @@ app.post('/resetPlayer', async (req, res) => {
 app.post('/moveToFinal', async (req, res) => {
     const { username } = req.body;
     // Call the resetPlayer function with the provided username
-    const usernames = username.split(" ");
+    let username2 = username.replaceAll("\r", "")
+    let usernames = username2.split("\n");
     await moveToFinal(usernames);
     return res.send("Moved To Comp.");
 });
@@ -122,10 +126,11 @@ app.get('/getAllPlayer', async (req, res) => {
 app.post('/clearLeaderboard', async (req, res) => {
     const { levelName } = req.body;
     // Call the clearLeaderboard function with the provided level name
-    const levelNames = username.split(" ");
-    for (let i = 0; i < levelNames.length; i++) {
-        await clearLeaderboard(levelNames[i]);
-    }
+    await clearLeaderboard(levelName);
+    // const levelNames = username.split(" ");
+    // for (let i = 0; i < levelNames.length; i++) {
+    //     await clearLeaderboard(levelNames[i]);
+    // }
     return res.send("Leaderboard cleared successfully.");
 });
 
@@ -281,7 +286,11 @@ async function openLevelBatch1(username) {
             if (user) {
                 // Modify the user object
                 // user.points = new BSON.Int32(100000000);
-                user.earned.levels = batch1;
+                if (user.earned) {
+                    if (user.earned.levels) {
+                        user.earned.levels = batch1;
+                    }
+                }
 
                 // Update the user object in the database
                 const updateResult = await collection.updateOne(
@@ -314,8 +323,11 @@ async function openLevelBatch2(username) {
 
             if (user) {
                 // Modify the user object
-                user.earned.levels = batch2;
-
+                if (user.earned) {
+                    if (user.earned.levels) {
+                        user.earned.levels = batch2;
+                    }
+                }
                 // Update the user object in the database
                 const updateResult = await collection.updateOne(
                     { _id: user._id },
@@ -348,7 +360,11 @@ async function openLevelBatch3(username) {
 
             if (user) {
                 // Modify the user object
-                user.earned.levels = batch3;
+                if (user.earned) {
+                    if (user.earned.levels) {
+                        user.earned.levels = batch3;
+                    }
+                }
 
                 // Update the user object in the database
                 const updateResult = await collection.updateOne(
@@ -381,7 +397,11 @@ async function openLevelBatch4(username) {
 
             if (user) {
                 // Modify the user object
-                user.earned.levels = batch4;
+                if (user.earned) {
+                    if (user.earned.levels) {
+                        user.earned.levels = batch4;
+                    }
+                }
 
                 // Update the user object in the database
                 const updateResult = await collection.updateOne(
@@ -445,13 +465,31 @@ async function resetPlayer(username) {
                 }
                 user.purchased.items = [];
                 user.purchased.heroes = [];
-                user.earned.levels = [];
-                user.heroConfig = {};
-                if (!user.heroConfig) {
-                    user.heroConfig = {};
-                } else {
-                    user.heroConfig.inventory = {};
-                }
+                // user.earned.levels = [];
+                // if (!user.heroConfig) {
+                //     user.heroConfig = {};
+                // } else {
+                user.heroConfig.inventory = {
+                    "head": "",
+                    "eyes": "",
+                    "neck": "",
+                    "torso": "",
+                    "gloves": "",
+                    "wrists": "",
+                    "left-hand": "",
+                    "right-hand": "",
+                    "waist": "",
+                    "feet": "",
+                    "left-ring": "",
+                    "right-ring": "",
+                    "flag": "",
+                    "pet": ""
+                };
+                user.heroConfig.inventory = {};
+                user.heroConfig.inventory = {};
+                user.heroConfig = {}
+                console.log(user);
+                // }
 
                 // Update the user object in the database
                 const updateResult = await collection.updateOne(
@@ -479,8 +517,8 @@ async function moveToFinal(usernames) {
         const collection = db.collection(collectionName);
 
         for (const username of usernames) {
-            const sesiUsername = `sesi_${username}`;
-            const compUsername = `comp_${username}`;
+            const sesiUsername = `SESI_${username}`;
+            const compUsername = `COMP_${username}`;
             const sesiUser = await collection.findOne({ name: { $regex: sesiUsername } });
             const compUser = await collection.findOne({ name: { $regex: compUsername } });
 
@@ -490,9 +528,12 @@ async function moveToFinal(usernames) {
             console.log(compUser);
 
             if (sesiUser && compUser) {
-                if (sesiUser.earned && sesiUser.earned.gems) {
-                    compUser.earned = { gems: new BSON.Int32(sesiUser.earned.gems) };
+                if(sesiUser.earned){
+                    compUser.earned = sesiUser.earned;
                 }
+                // if (sesiUser.earned && sesiUser.earned.gems) {
+                //     compUser.earned = { gems: new BSON.Int32(sesiUser.earned.gems) };
+                // }
 
                 // Update the user object in the database
                 await collection.updateOne(
