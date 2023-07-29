@@ -530,6 +530,9 @@ async function moveToFinal(usernames) {
             if (sesiUser && compUser) {
                 if(sesiUser.earned){
                     compUser.earned = sesiUser.earned;
+                    if(compUser.earned.gems){
+                        compUser.earned.gems = compUser.earned.gems*0.3+11000;
+                    }
                 }
                 // if (sesiUser.earned && sesiUser.earned.gems) {
                 //     compUser.earned = { gems: new BSON.Int32(sesiUser.earned.gems) };
